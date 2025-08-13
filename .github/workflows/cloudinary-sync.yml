@@ -1,0 +1,29 @@
+name: Sync Images with Cloudinary
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'public/images/**'
+      - 'src/assets/**'
+
+jobs:
+  sync-images:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install Cloudinary CLI
+      run: npm install -g cloudinary-cli
+        
+    - name: Sync images to Cloudinary
+      run: |
+        cloudinary config --cloud-name ${{ secrets.CLOUDINARY_CLOUD_NAME }} --api-key ${{ secrets.CLOUDINARY_API_KEY }} --api-secret ${{ secrets.CLOUDINARY_API_SECRET }}
+        cloudinary upload public/images --folder portfolio
